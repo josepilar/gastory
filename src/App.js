@@ -1,8 +1,8 @@
 /* global gapi */
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Layout, Menu } from 'antd';
-import GoogleLogin from 'react-google-login';
+import { Layout, Menu, Button, Row, Col } from 'antd';
+import GoogleLogin, {GoogleLogout} from 'react-google-login';
 import axios from 'axios';
 
 const documentKey = '1N8JjCUfGQHH7RULfxJdDh6_20JmJRaR0hInATBttKso';
@@ -10,18 +10,37 @@ const clientId = '397035199840-5fnvhn7iaakgnhnv99h2hc1sis6aan6p.apps.googleuserc
 
 function App() {
 
-  const [user, setUser] = useState();
+  const [auth, setAuth] = useState();
+  const [user, setUser] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [data, setData] = useState({});
+
+  const setupStuff = (data) => {
+    setAuth(data.Zi);
+    setUser(data.w3);
+  }
 
   const responseGoogle = async (user) => {
-    setUser(user);
-    localStorage.setItem('gastoryUser', JSON.stringify(user));
+    setupStuff(gapi.auth2.getAuthInstance().currentUser.Ab);
+    setIsLoggedIn(true);
   };
 
   useEffect(() => {
-    const localUser = localStorage.getItem('gastoryUser');
-    if (localUser) {
-      setUser(JSON.parse(localUser));
-    }
+    gapi.load('auth2', function(){
+      const auth2 = gapi.auth2.init({
+          client_id: clientId,
+          scope: 'https://www.googleapis.com/auth/spreadsheets'
+      });
+      // auth2.ClientConfig({
+       
+      // })
+      auth2.isSignedIn.listen((loggedIn) => {
+        setIsLoggedIn(loggedIn);
+        if (loggedIn) {
+          setupStuff(gapi.auth2.getAuthInstance().currentUser.Ab);
+        }
+      }); // This is what you use to listen for user changes
+     });
   }, []);
 
   const loadData = async () => {
@@ -29,7 +48,7 @@ function App() {
       method: 'post',
       url: `https://sheets.googleapis.com/v4/spreadsheets/${documentKey}/values:batchGetByDataFilter`,
       headers: {
-        Authorization: `${user.tokenObj.token_type} ${user.tokenObj.access_token}`
+        Authorization: `${auth.token_type} ${auth.access_token}`
       },
       data: {
         dataFilters: [
@@ -43,61 +62,45 @@ function App() {
       }
     });
     console.log(resp);
+    setData(resp);
   }
+
+  const logout = () => setUser({});
 
   return (
     <Layout className='Container'>
       <Layout.Header className='header'>
-        <div className="logo" />
-        TEST
+        <Row>
+          <Col span={12}>
+            <div className="logo" />
+            {isLoggedIn ? `Welcome ${user.ofa}` : 'Please login to start'}
+          </Col>
+          <Col span={3} offset={9}>
+            {!isLoggedIn && <GoogleLogin
+              clientId={clientId}
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              discoveryDocs="https://sheets.googleapis.com/$discovery/rest?version=v4"
+              scope="https://www.googleapis.com/auth/spreadsheets"
+              render={renderProps => (<Button type="primary" onClick={renderProps.onClick} disabled={renderProps.disabled}>Login</Button>)}
+            />}
+            {isLoggedIn && <GoogleLogout
+              buttonText="Logout"
+              onLogoutSuccess={logout}
+              render={renderProps => (<Button onClick={renderProps.onClick} disabled={renderProps.disabled}>Logout</Button>)}
+            />}
+          </Col>
+        </Row>
       </Layout.Header>
       <Layout>
         <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
           <Menu mode='inline' className='Side'>
-            <Menu.SubMenu title='tests'>
+            <Menu.SubMenu title='History'>
               <Menu.Item>Test1</Menu.Item>
               <Menu.Item>Test2</Menu.Item>
-              <Menu.Item>Test3</Menu.Item>
-              <Menu.Item>Test4</Menu.Item>
             </Menu.SubMenu>
-            <Menu.SubMenu title='perros'>
-            <Menu.Item>Perro1</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
+            <Menu.SubMenu title='Cars'>
+              <Menu.Item>Cars</Menu.Item>
               <Menu.Item>Perro2</Menu.Item>
               <Menu.Item>Perro3</Menu.Item>
             </Menu.SubMenu>
@@ -105,16 +108,10 @@ function App() {
         </Layout.Sider>
         <Layout>
           <Layout.Content className='MainContent'>
-            {!user && <GoogleLogin
-              clientId={clientId}
-              buttonText="Login"
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              discoveryDocs="https://sheets.googleapis.com/$discovery/rest?version=v4"
-              scope="https://www.googleapis.com/auth/spreadsheets"
-            />}
             <br/>
-            <button style={{marginLeft: 'auto', marginRight: 'auto', position: 'abosulute'}} onClick={loadData}>load data</button>
+            {isLoggedIn && <button style={{marginLeft: 'auto', marginRight: 'auto', position: 'abosulute'}} onClick={loadData}>load data</button>}
+            <br/>
+            {JSON.stringify(data)}
           </Layout.Content>
         </Layout>
       </Layout>
