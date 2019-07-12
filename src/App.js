@@ -1,121 +1,106 @@
 /* global gapi */
 import React, { useEffect, useState } from 'react';
-import './App.css';
-import { Layout, Menu, Button, Row, Col } from 'antd';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Layout, Menu, Button, Row, Col, notification, Avatar } from 'antd';
 import GoogleLogin, {GoogleLogout} from 'react-google-login';
-import axios from 'axios';
 
-const documentKey = '1N8JjCUfGQHH7RULfxJdDh6_20JmJRaR0hInATBttKso';
-const clientId = '397035199840-5fnvhn7iaakgnhnv99h2hc1sis6aan6p.apps.googleusercontent.com';
+import './App.css';
+
+import Home from './components/Home';
+
+import { listenForUserChanges } from './helpers/gapi_helper';
+import { getDate } from './helpers/date.helper';
+import { CLIENT_ID } from './constants';
+import { loadAllHistoryData, setUpAxiosAuth } from './services/gastory.service';
+
+const AuthContext = React.createContext({});
 
 function App() {
 
-  const [auth, setAuth] = useState();
-  const [user, setUser] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [data, setData] = useState({});
+  const [auth, setAuth] = useState({ user: {}, isLoggedIn: false });
+  const [history, setHistory] = useState();
+  const [cars, setCars] = useState();
 
-  const setupStuff = (data) => {
-    setAuth(data.Zi);
-    setUser(data.w3);
+  const setupAuthenticationData = async (data) => {
+    setAuth({ ...auth, data: data.Zi, user: data.w3, isLoggedIn: true });
+    setUpAxiosAuth(data.Zi);
+    if (!history) {
+      setHistory([]);
+      try {
+        setHistory(await loadAllHistoryData());
+        notification.success({message: 'Gas History Loaded', placement: 'bottomRight'});
+      } catch (error) {
+        notification.error({message: 'Error loading history',  placement: 'bottomRight'});
+      }
+    }
   }
 
-  const responseGoogle = async (user) => {
-    setupStuff(gapi.auth2.getAuthInstance().currentUser.Ab);
-    setIsLoggedIn(true);
+  const responseGoogle = async () => {
+    setupAuthenticationData(gapi.auth2.getAuthInstance().currentUser.Ab);
+    setAuth({ ...auth, isLoggedIn: true });
   };
 
   useEffect(() => {
-    gapi.load('auth2', function(){
-      const auth2 = gapi.auth2.init({
-          client_id: clientId,
-          scope: 'https://www.googleapis.com/auth/spreadsheets'
-      });
-      // auth2.ClientConfig({
-       
-      // })
-      auth2.isSignedIn.listen((loggedIn) => {
-        setIsLoggedIn(loggedIn);
-        if (loggedIn) {
-          setupStuff(gapi.auth2.getAuthInstance().currentUser.Ab);
-        }
-      }); // This is what you use to listen for user changes
-     });
+    listenForUserChanges(setupAuthenticationData);
   }, []);
 
-  const loadData = async () => {
-    const resp = await axios({
-      method: 'post',
-      url: `https://sheets.googleapis.com/v4/spreadsheets/${documentKey}/values:batchGetByDataFilter`,
-      headers: {
-        Authorization: `${auth.token_type} ${auth.access_token}`
-      },
-      data: {
-        dataFilters: [
-          {
-            gridRange: {
-              sheetId: 0,
-              startRowIndex: 1
-            }
-          }
-        ]
-      }
-    });
-    console.log(resp);
-    setData(resp);
-  }
 
-  const logout = () => setUser({});
+  const logout = () => {
+    setHistory();
+    setAuth({ user: {}, isLoggedIn: false })
+  };
 
   return (
-    <Layout className='Container'>
-      <Layout.Header className='header'>
-        <Row>
-          <Col span={12}>
-            <div className="logo" />
-            {isLoggedIn ? `Welcome ${user.ofa}` : 'Please login to start'}
-          </Col>
-          <Col span={3} offset={9}>
-            {!isLoggedIn && <GoogleLogin
-              clientId={clientId}
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              discoveryDocs="https://sheets.googleapis.com/$discovery/rest?version=v4"
-              scope="https://www.googleapis.com/auth/spreadsheets"
-              render={renderProps => (<Button type="primary" onClick={renderProps.onClick} disabled={renderProps.disabled}>Login</Button>)}
-            />}
-            {isLoggedIn && <GoogleLogout
-              buttonText="Logout"
-              onLogoutSuccess={logout}
-              render={renderProps => (<Button onClick={renderProps.onClick} disabled={renderProps.disabled}>Logout</Button>)}
-            />}
-          </Col>
-        </Row>
-      </Layout.Header>
-      <Layout>
-        <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
-          <Menu mode='inline' className='Side'>
-            <Menu.SubMenu title='History'>
-              <Menu.Item>Test1</Menu.Item>
-              <Menu.Item>Test2</Menu.Item>
-            </Menu.SubMenu>
-            <Menu.SubMenu title='Cars'>
-              <Menu.Item>Cars</Menu.Item>
-              <Menu.Item>Perro2</Menu.Item>
-              <Menu.Item>Perro3</Menu.Item>
-            </Menu.SubMenu>
-          </Menu>
-        </Layout.Sider>
-        <Layout>
-          <Layout.Content className='MainContent'>
-            <br/>
-            {isLoggedIn && <button style={{marginLeft: 'auto', marginRight: 'auto', position: 'abosulute'}} onClick={loadData}>load data</button>}
-            <br/>
-            {JSON.stringify(data)}
-          </Layout.Content>
+    <Router>
+      <AuthContext.Provider value={auth}>
+        <Layout className='Container'>
+          <Layout.Header className='header'>
+            <Row>
+              <Col span={15}>
+                <Avatar src={auth.user.Paa} icon="user" /> 
+                <span style={{ marginLeft: 16, verticalAlign: 'middle' }}>
+                  {auth.isLoggedIn ? `Welcome ${auth.user.ofa}` : 'Please login to start'}
+                </span>
+              </Col>
+              <Col span={3} offset={6}>
+                {!auth.isLoggedIn && <GoogleLogin
+                  clientId={CLIENT_ID}
+                  onSuccess={responseGoogle}
+                  discoveryDocs="https://sheets.googleapis.com/$discovery/rest?version=v4"
+                  scope="https://www.googleapis.com/auth/spreadsheets"
+                  render={renderProps => (<Button type="primary" onClick={renderProps.onClick} disabled={renderProps.disabled}>Login</Button>)}
+                />}
+                {auth.isLoggedIn && <GoogleLogout
+                  buttonText="Logout"
+                  onLogoutSuccess={logout}
+                  render={renderProps => (<Button onClick={renderProps.onClick} disabled={renderProps.disabled}>Logout</Button>)}
+                />}
+              </Col>
+            </Row>
+          </Layout.Header>
+          <Layout>
+            <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
+              <Menu mode='inline' className='Side'>
+                <Menu.SubMenu title='History'>
+                  <Menu.Item>Test1</Menu.Item>
+                  <Menu.Item>Test2</Menu.Item>
+                </Menu.SubMenu>
+                <Menu.SubMenu title='Cars'>
+                  <Menu.Item>Cars</Menu.Item>
+                  <Menu.Item>Perro2</Menu.Item>
+                  <Menu.Item>Perro3</Menu.Item>
+                </Menu.SubMenu>
+              </Menu>
+            </Layout.Sider>
+            <Layout>
+              <Layout.Content className='MainContent'>
+                <Route exact path="/" render={props => <Home {...props} history={history}/>} />
+              </Layout.Content>
+            </Layout>
+          </Layout>
         </Layout>
-      </Layout>
-    </Layout>
+      </AuthContext.Provider>
+    </Router>
   );
 }
 
