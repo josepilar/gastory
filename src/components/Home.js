@@ -67,7 +67,7 @@ const Home = ({ history }) => {
                             valueStyle={{ color: lastRecord.cpk < average.cpk ? '#3f8600' : '#cf1322' }}
                             prefix={<Icon type={lastRecord.cpk > average.cpk ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">$/Km</Tag>}
-                            precision={2}/>
+                            precision={4}/>
                     </Card>
                 </Col>
             </Row>
