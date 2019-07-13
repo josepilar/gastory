@@ -1,113 +1,139 @@
-import React, { memo } from 'react';
-import { Statistic, Card, Row, Col, Icon, Empty, Tag} from 'antd';
+import React, { memo, useState, useEffect } from 'react';
+import { Statistic, Card, Row, Col, Icon, Empty, Tag, Divider, Spin, Button, message } from 'antd';
+import { getAverage } from '../helpers/home.helper';
+import { getTrips } from '../services/gastory.service';
 
-const Home = ({ history }) => {
-    if (!history) return null;
-    if (!history.length) return <Empty style={{paddingTop: 100}}/>;
-    const ht = history.length;
-    const average = history.reduce((accum, record) => {
-        const kpl = record.trip/record.litters;
-        const cpk = record.cost/record.trip;
-        return {
-            cost: accum.cost + (record.cost/ht),
-            litters: accum.litters + (record.litters/ht),
-            trip: accum.trip + (record.trip/ht),
-            kpl: accum.kpl + (kpl/ht),
-            cpk: accum.cpk + (cpk/ht),
-            wholeTrip: accum.wholeTrip + (record.trip * 1),
+const loadingStyles = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    height: '100%',
+}
+const cardStyles = {
+    height: 145
+}
+const Home = ({ cars, loading }) => {
+    const [selectedCar, setSelectedCar] = useState();
+    const [carWithTrips, setCarsWithTrips] = useState(cars);
+    const [tripsLoading, setTripsLoading] = useState(false);
+    useEffect(() => {
+        setTripsLoading(true);
+        const loadTrips = async () => {
+            try {
+                const trips = await getTrips();
+                const carsAndTrips = cars.map(cwt => { return { ...cwt, trips: trips.filter(trip => trip.carId === cwt.id) } });
+                setCarsWithTrips(carsAndTrips);
+                setSelectedCar(carsAndTrips.find(car => !!car.default) || cars[0]);
+                setTripsLoading(false);
+            } catch (error) {
+                message.error('Error loading cars');
+                console.error(error);
+                setTripsLoading(false);
+            }
         }
-    }, { cost: 0, litters: 0, trip: 0, kpl: 0, cpk: 0, wholeTrip: 0});
-    const lastRecord = {...history[ht -1]};
-    lastRecord.kpl = lastRecord.trip/lastRecord.litters;
-    lastRecord.cpk = lastRecord.cost/lastRecord.trip;
-    average.wholeTrip = (average.wholeTrip/1000).toString().substring(0, 5);
+        if (cars) loadTrips();
+    }, [cars]);
 
-    console.log(average.wholeTrip);
+    if (loading || tripsLoading) { return <div style={loadingStyles}> <Spin size="large" style={{ paddingTop: 150 }} /></div>; }
+    if (!carWithTrips || !carWithTrips.length) {
+        return <Empty description="No Cars Found" image={<Icon type="car" style={{ fontSize: '5em' }} />} style={{ paddingTop: 100 }} >
+            <Button type="primary">Add one now</Button>
+        </Empty>
+    }
 
+    if (selectedCar && (!selectedCar.trips || !selectedCar.trips.length)) {
+        return <Empty description="No Trips Found" image={<Icon type="dashboard" style={{ fontSize: '5em' }} />} style={{ paddingTop: 100 }} >
+            <Button type="primary">Add one now</Button>
+        </Empty>
+    }
+
+    const tlength = selectedCar.trips.length;
+    const average = getAverage(selectedCar.trips);
+    const lastRecord = { ...selectedCar.trips[tlength - 1] };
+    lastRecord.kpl = (lastRecord.trip / lastRecord.litters) || 'N/A';
+    lastRecord.cpk = (lastRecord.cost / lastRecord.trip) || 'N/A';
+    average.wholeTrip = (average.wholeTrip / 1000).toString().substring(0, 5);
     return (
         <div style={{ padding: '20px' }}>
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} style={{ marginLeft: 0, marginRight: 0 }}>
-                    <Card>
-                        <Col span={12} >
-                            <Statistic 
-                                title="Viaje hasta ahora" 
-                                value={`${average.wholeTrip}K`}
-                                prefix={<Icon type="car" />}
-                                suffix={<Tag color="#87d068">Kms</Tag>}
-                                precision={2}/>
-                        </Col>
-                        <Col span={12}>
-                            <Statistic 
-                                title="Consumo" 
-                                value={lastRecord.kpl}
-                                valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
-                                prefix={<Icon type={lastRecord.kpl > average.kpl ? 'arrow-up' : 'arrow-down'} />}
-                                suffix={<Tag color="#87d068">Km/L</Tag>}
-                                precision={2}/>
-                        </Col>
-                    </Card>
-            </Row>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={12} style={{ padding: 4}}>
-                    <Card>
-                        <Statistic 
-                            title="Consumo" 
+                <Card bodyStyle={cardStyles}>
+                    <Col style={{ height: '100%' }} span={12}>
+                        <img style={{ maxHeight: '100%', maxWidth: '100%' }} alt={`${selectedCar.maker} ${selectedCar.model}`} src={selectedCar.imageUrl} />
+                    </Col>
+                    <Col span={12} >
+                        <Statistic
+                            title="Rendimiento"
                             value={lastRecord.kpl}
                             valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
                             prefix={<Icon type={lastRecord.kpl > average.kpl ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">Km/L</Tag>}
-                            precision={2}/>
+                            precision={2} />
+                    </Col>
+                </Card>
+            </Row>
+            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                <Col span={12} style={{ padding: 4 }}>
+                    <Card bodyStyle={cardStyles}>
+                        <Statistic
+                            title="Viaje hasta ahora"
+                            value={`${average.wholeTrip}K`}
+                            prefix={<Icon type="car" />}
+                            suffix={<Tag color="#87d068">Kms</Tag>}
+                            precision={2} />
+
                     </Card>
                 </Col>
-                <Col span={12} style={{ padding: 4}}>
-                    <Card>
-                        <Statistic 
-                            title="Costo por Km" 
+                <Col span={12} style={{ padding: 4 }}>
+                    <Card bodyStyle={cardStyles}>
+                        <Statistic
+                            title="Costo por Km"
                             value={lastRecord.cpk}
                             valueStyle={{ color: lastRecord.cpk < average.cpk ? '#3f8600' : '#cf1322' }}
                             prefix={<Icon type={lastRecord.cpk > average.cpk ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">$/Km</Tag>}
-                            precision={4}/>
+                            precision={4} />
                     </Card>
                 </Col>
             </Row>
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={12} style={{ padding: 4}}>
-                    <Card>
-                        <Statistic 
-                            title="Ultimo Gasto" 
+                <Col span={12} style={{ padding: 4 }} >
+                    <Card bodyStyle={cardStyles}>
+                        <Statistic
+                            title="Ultimo Gasto"
                             value={lastRecord.cost}
                             valueStyle={{ color: lastRecord.cost < average.cost ? '#3f8600' : '#cf1322' }}
-                            prefix={<Icon type={lastRecord.cost >  average.cost ? 'arrow-up' : 'arrow-down'} />}
+                            prefix={<Icon type={lastRecord.cost > average.cost ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">Mxn</Tag>}
-                            precision={2}/>
+                            precision={2} />
                     </Card>
                 </Col>
-                <Col span={12} style={{ padding: 4}}>
-                    <Card>
-                        <Statistic 
-                            title="Ultimo Viaje" 
+                <Col span={12} style={{ padding: 4 }}>
+                    <Card bodyStyle={cardStyles}>
+                        <Statistic
+                            title="Ultimo Viaje"
                             value={lastRecord.trip}
                             valueStyle={{ color: lastRecord.trip > average.trip ? '#3f8600' : '#cf1322' }}
-                            prefix={<Icon type={lastRecord.trip >  average.trip ? 'arrow-up' : 'arrow-down'} />}
+                            prefix={<Icon type={lastRecord.trip > average.trip ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">Kms</Tag>}
-                            precision={2}/>
+                            precision={2} />
                     </Card>
                 </Col>
             </Row>
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={24} style={{ padding: 4}}>
-                    <Card>
-                        <Statistic 
-                            title="Promedio de Recarga" 
+                <Col span={24} style={{ padding: 4 }}>
+                    <Card bodyStyle={cardStyles}>
+                        <Statistic
+                            title="Promedio de Recarga"
                             value={lastRecord.litters}
                             valueStyle={{ color: lastRecord.litters < average.litters ? '#3f8600' : '#cf1322' }}
-                            prefix={<Icon type={lastRecord.litters >  average.litters ? 'arrow-up' : 'arrow-down'} />}
+                            prefix={<Icon type={lastRecord.litters > average.litters ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">Lts</Tag>}
-                            precision={2}/>
+                            precision={2} />
                     </Card>
                 </Col>
             </Row>
+            <Button style={{ position: 'fixed', bottom: 5, right: 5, height: '3.3em', width: '3.3em' }} type="primary" shape="circle" icon="plus" size="large" />
         </div>
     );
 };
