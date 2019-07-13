@@ -2,7 +2,7 @@
 import { CLIENT_ID } from '../constants';
 
 export function listenForUserChanges(setupAuthenticationData) {
-  const authInstance = gapi.auth2.getAuthInstance();
+  const authInstance = gapi.auth2.getAuthInstance && gapi.auth2.getAuthInstance();
   if (!authInstance) {
     gapi.load('auth2', function () {
       const auth2 = gapi.auth2.init({
