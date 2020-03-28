@@ -8,10 +8,9 @@ import './App.css';
 
 import Home from './components/Home';
 
-import { listenForUserChanges } from './helpers/gapi_helper';
+import { getUserInformation } from './helpers/gapi_helper';
 import { getDate } from './helpers/date.helper';
 import { CLIENT_ID } from './constants';
-import { setUpAxiosAuth, getCars, loadSheets } from './services/gastory.service';
 
 const AuthContext = React.createContext({});
 
@@ -20,35 +19,30 @@ function App() {
   const [auth, setAuth] = useState({ user: {}, isLoggedIn: false });
   const [cars, setCars] = useState();
   const [loading, setLoading] = useState(false);
+  console.log(auth);
 
   const setupAuthenticationData = async (data) => {
-    setLoading(true);
-    setAuth({ ...auth, data: data.Zi, user: data.w3, isLoggedIn: true });
-    setUpAxiosAuth(data.Zi);
-    loadSheets().then(async () => {
-      if (!cars) {
-        try {
-          setCars(await getCars());
-        } catch (error) {
-          message.error('Error loading cars');
-        }
-      }
-      setLoading(false);
-    }).catch(_ => setLoading(false));
+    if (data) {
+      setLoading(true);
+      setAuth({ ...auth, data: data.tokenObj, user: data.profileObj, isLoggedIn: true });
+    }
   }
 
+
   const responseGoogle = async () => {
-    setupAuthenticationData(gapi.auth2.getAuthInstance().currentUser.Ab);
-    setAuth({ ...auth, isLoggedIn: true });
+    const userInfo = gapi.auth2.getAuthInstance().currentUser.je;
+    window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    window.location.reload();
   };
 
   useEffect(() => {
-    listenForUserChanges(setupAuthenticationData);
+    getUserInformation(setupAuthenticationData);
   }, []);
 
 
   const logout = () => {
-    setAuth({ user: {}, isLoggedIn: false })
+    setAuth({ user: {}, isLoggedIn: false });
+    window.localStorage.removeItem('userInfo');
   };
 
   return (
@@ -58,9 +52,9 @@ function App() {
           <Layout.Header className='header'>
             <Row>
               <Col span={15}>
-                <Avatar src={auth.user.Paa} icon="user" />
+                <Avatar src={auth.user.imageUrl} icon="user" />
                 <span style={{ marginLeft: 16, verticalAlign: 'middle' }}>
-                  {auth.isLoggedIn ? `Welcome ${auth.user.ofa}` : 'Please login to start'}
+                  {auth.isLoggedIn ? `Welcome ${auth.user.givenName}` : 'Please login to start'}
                 </span>
               </Col>
               <Col span={4} offset={5}>
@@ -95,7 +89,7 @@ function App() {
                       clientId={CLIENT_ID}
                       onSuccess={responseGoogle}
                       discoveryDocs="https://sheets.googleapis.com/$discovery/rest?version=v4"
-                      scope="https://www.googleapis.com/auth/spreadsheets"
+                      scope="https://www.googleapis.com/auth/userinfo.profile"
                       render={renderProps => (<Button type="primary" onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon type="google" />Login</Button>)} />
                   } image={<span />} />
                 }
