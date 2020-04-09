@@ -59,12 +59,30 @@ const Home = ({ cars }) => {
     average.wholeTrip = (average.wholeTrip / 1000).toString().substring(0, 5);
     return (
         <div style={{ padding: '20px' }}>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} style={{ marginLeft: 0, marginRight: 0 }}>
-                <Card bodyStyle={cardStyles}>
-                    <Col style={{ height: '100%' }} span={12}>
+            <Row gutter={4} >
+                <Col xs={0} sm={24} style={{ padding: 4 }}>
+                    <Card bodyStyle={cardStyles}>
+                        <Col style={{ height: '100%' }} xs={0} sm={12}>
+                            <img style={{ maxHeight: '100%', maxWidth: '100%' }} alt={`${selectedCar.maker} ${selectedCar.model}`} src={selectedCar.imageUrl} />
+                        </Col>
+                        <Col xs={0} sm={12}>
+                            <Statistic
+                                title="Rendimiento"
+                                value={lastRecord.kpl}
+                                valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
+                                prefix={<Icon type={lastRecord.kpl > average.kpl ? 'arrow-up' : 'arrow-down'} />}
+                                suffix={<Tag color="#87d068">Km/L</Tag>}
+                                precision={2} />
+                        </Col>
+                    </Card>
+                </Col>
+                <Col style={{ height: '100%', padding: 4 }} xs={24} sm={0} >
+                    <Card bodyStyle={cardStyles}>
                         <img style={{ maxHeight: '100%', maxWidth: '100%' }} alt={`${selectedCar.maker} ${selectedCar.model}`} src={selectedCar.imageUrl} />
-                    </Col>
-                    <Col span={12} >
+                    </Card>
+                </Col>
+                <Col xs={24} sm={0} style={{ padding: 4 }} >
+                    <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Rendimiento"
                             value={lastRecord.kpl}
@@ -72,11 +90,11 @@ const Home = ({ cars }) => {
                             prefix={<Icon type={lastRecord.kpl > average.kpl ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">Km/L</Tag>}
                             precision={2} />
-                    </Col>
-                </Card>
+                    </Card>
+                </Col>
             </Row>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={12} style={{ padding: 4 }}>
+            <Row gutter={4}>
+                <Col xs={24} sm={12} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Viaje hasta ahora"
@@ -84,10 +102,9 @@ const Home = ({ cars }) => {
                             prefix={<Icon type="car" />}
                             suffix={<Tag color="#87d068">Kms</Tag>}
                             precision={2} />
-
                     </Card>
                 </Col>
-                <Col span={12} style={{ padding: 4 }}>
+                <Col xs={24} sm={12} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Costo por Km"
@@ -99,8 +116,8 @@ const Home = ({ cars }) => {
                     </Card>
                 </Col>
             </Row>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={12} style={{ padding: 4 }} >
+            <Row gutter={4}>
+                <Col xs={24} sm={12} style={{ padding: 4 }} >
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Ultimo Gasto"
@@ -111,7 +128,7 @@ const Home = ({ cars }) => {
                             precision={2} />
                     </Card>
                 </Col>
-                <Col span={12} style={{ padding: 4 }}>
+                <Col xs={24} sm={12} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Ultimo Viaje"
@@ -123,8 +140,8 @@ const Home = ({ cars }) => {
                     </Card>
                 </Col>
             </Row>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={24} style={{ padding: 4 }}>
+            <Row gutter={4}>
+                <Col xs={24} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Promedio de Recarga"

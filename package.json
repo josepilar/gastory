@@ -25,11 +25,13 @@
   },
   "scripts": {
     "start": "run-p server app",
+    "startdev": "run-p serverdev app",
     "app": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "server": "node-env-run server --exec nodemon"
+    "server": "node server",
+    "serverdev": "node-env-run server --exec nodemon"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
