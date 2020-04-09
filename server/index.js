@@ -1,13 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const pino = require('express-pino-logger')();
 const mongoose = require('mongoose');
 
 const api = require('./api');
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(pino);
 
 const { DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DB_PORT } = process.env;
 const conectionString = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;

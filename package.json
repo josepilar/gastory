@@ -50,8 +50,6 @@
     ]
   },
   "devDependencies": {
-    "express-pino-logger": "^4.0.0",
-    "nodemon": "^2.0.2",
-    "pino-colada": "^2.0.0"
+    "nodemon": "^2.0.2"
   }
 }
