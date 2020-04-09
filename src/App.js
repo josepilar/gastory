@@ -1,14 +1,15 @@
 /* global gapi */
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { Layout, Menu, Button, Row, Col, message, Avatar, Icon, Empty } from 'antd';
+import { Layout, Menu, Button, Row, Col, Spin, Avatar, Icon, Empty } from 'antd';
 import GoogleLogin, { GoogleLogout } from 'react-google-login';
 
 import './App.css';
 
 import Home from './components/Home';
 
-import { getUserInformation } from './helpers/gapi_helper';
+import { setUpAxiosIdentity, getCars } from './services/gastory.service';
+import { getUserInformation } from './helpers/identity_helper';
 import { getDate } from './helpers/date.helper';
 import { CLIENT_ID } from './constants';
 
@@ -18,12 +19,10 @@ function App() {
 
   const [auth, setAuth] = useState({ user: {}, isLoggedIn: false });
   const [cars, setCars] = useState();
-  const [loading, setLoading] = useState(false);
-  console.log(auth);
 
   const setupAuthenticationData = async (data) => {
     if (data) {
-      setLoading(true);
+      setUpAxiosIdentity();
       setAuth({ ...auth, data: data.tokenObj, user: data.profileObj, isLoggedIn: true });
     }
   }
@@ -36,7 +35,15 @@ function App() {
   };
 
   useEffect(() => {
-    getUserInformation(setupAuthenticationData);
+    const userInfo = getUserInformation();
+    if (userInfo) setupAuthenticationData(userInfo);
+
+    const getCarsData = async () => {
+      const data = await getCars();
+      setCars(data);
+    }
+
+    getCarsData();
   }, []);
 
 
@@ -67,28 +74,25 @@ function App() {
           </Layout.Header>
           <Layout>
             {auth.isLoggedIn && <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
-              <Menu mode='inline' className='Side'>
+              <Menu mode='inline' className='Side' defaultOpenKeys={['cars']}>
                 <Menu.SubMenu title='History'>
                   <Menu.Item>Test1</Menu.Item>
                   <Menu.Item>Test2</Menu.Item>
                 </Menu.SubMenu>
-                <Menu.SubMenu title='Cars'>
-                  <Menu.Item>Cars</Menu.Item>
-                  <Menu.Item>Perro2</Menu.Item>
-                  <Menu.Item>Perro3</Menu.Item>
-                </Menu.SubMenu>
+                {cars && cars.length && <Menu.SubMenu title='Cars' key="cars" inlineCollapsed="false">
+                  {cars && cars.map(car => <Menu.Item key={car._id}>{car.model}</Menu.Item>)}
+                </Menu.SubMenu>}
               </Menu>
             </Layout.Sider>}
             <Layout>
               <Layout.Content className='MainContent'>
                 {auth.isLoggedIn ? (
-                  <Route exact path="/" render={props => <Home {...props} cars={cars} loading={loading} />} />
+                  <Route exact path="/" render={props => <Home {...props} cars={cars} />} />
                 ) :
                   <Empty description={
                     <GoogleLogin
                       clientId={CLIENT_ID}
                       onSuccess={responseGoogle}
-                      discoveryDocs="https://sheets.googleapis.com/$discovery/rest?version=v4"
                       scope="https://www.googleapis.com/auth/userinfo.profile"
                       render={renderProps => (<Button type="primary" onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon type="google" />Login</Button>)} />
                   } image={<span />} />

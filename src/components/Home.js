@@ -1,6 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Statistic, Card, Row, Col, Icon, Empty, Tag, Divider, Spin, Button, message } from 'antd';
 import { getAverage } from '../helpers/home.helper';
+
 import { getTrips } from '../services/gastory.service';
 
 const loadingStyles = {
@@ -13,7 +14,7 @@ const loadingStyles = {
 const cardStyles = {
     height: 145
 }
-const Home = ({ cars, loading }) => {
+const Home = ({ cars }) => {
     const [selectedCar, setSelectedCar] = useState();
     const [carWithTrips, setCarsWithTrips] = useState(cars);
     const [tripsLoading, setTripsLoading] = useState(false);
@@ -22,9 +23,9 @@ const Home = ({ cars, loading }) => {
         const loadTrips = async () => {
             try {
                 const trips = await getTrips();
-                const carsAndTrips = cars.map(cwt => { return { ...cwt, trips: trips.filter(trip => trip.carId === cwt.id) } });
+                const carsAndTrips = cars.map(car => { return { ...car, trips: trips.filter(trip => trip.carId === car._id) } });
                 setCarsWithTrips(carsAndTrips);
-                setSelectedCar(carsAndTrips.find(car => !!car.default) || cars[0]);
+                setSelectedCar(carsAndTrips.find(car => car.default) || cars[0]);
                 setTripsLoading(false);
             } catch (error) {
                 message.error('Error loading cars');
@@ -35,7 +36,7 @@ const Home = ({ cars, loading }) => {
         if (cars) loadTrips();
     }, [cars]);
 
-    if (loading || tripsLoading) { return <div style={loadingStyles}> <Spin size="large" style={{ paddingTop: 150 }} /></div>; }
+    if (tripsLoading) { return <div style={loadingStyles}> <Spin size="large" style={{ paddingTop: 150 }} /></div>; }
     if (!carWithTrips || !carWithTrips.length) {
         return <Empty description="No Cars Found" image={<Icon type="car" style={{ fontSize: '5em' }} />} style={{ paddingTop: 100 }} >
             <Button type="primary">Add one now</Button>
@@ -51,7 +52,9 @@ const Home = ({ cars, loading }) => {
     const tlength = selectedCar.trips.length;
     const average = getAverage(selectedCar.trips);
     const lastRecord = { ...selectedCar.trips[tlength - 1] };
-    lastRecord.kpl = (lastRecord.trip / lastRecord.litters) || 'N/A';
+    console.log(lastRecord);
+
+    lastRecord.kpl = (lastRecord.trip / lastRecord.volume) || 'N/A';
     lastRecord.cpk = (lastRecord.cost / lastRecord.trip) || 'N/A';
     average.wholeTrip = (average.wholeTrip / 1000).toString().substring(0, 5);
     return (
@@ -125,9 +128,9 @@ const Home = ({ cars, loading }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             title="Promedio de Recarga"
-                            value={lastRecord.litters}
-                            valueStyle={{ color: lastRecord.litters < average.litters ? '#3f8600' : '#cf1322' }}
-                            prefix={<Icon type={lastRecord.litters > average.litters ? 'arrow-up' : 'arrow-down'} />}
+                            value={lastRecord.volume}
+                            valueStyle={{ color: lastRecord.volume < average.volume ? '#3f8600' : '#cf1322' }}
+                            prefix={<Icon type={lastRecord.volume > average.volume ? 'arrow-up' : 'arrow-down'} />}
                             suffix={<Tag color="#87d068">Lts</Tag>}
                             precision={2} />
                     </Card>
