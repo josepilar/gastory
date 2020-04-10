@@ -1,4 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
+import { css } from 'emotion';
 import { Statistic, Card, Row, Col, Icon, Empty, Tag, Divider, Spin, Button, message } from 'antd';
 import { getAverage } from '../helpers/home.helper';
 
@@ -14,6 +15,9 @@ const loadingStyles = {
 const cardStyles = {
     height: 145
 }
+
+const stadisticStyles = css`text-align: center;`;
+
 const Home = ({ cars }) => {
     const [selectedCar, setSelectedCar] = useState();
     const [carWithTrips, setCarsWithTrips] = useState(cars);
@@ -62,11 +66,12 @@ const Home = ({ cars }) => {
             <Row gutter={4} >
                 <Col xs={0} sm={24} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
-                        <Col style={{ height: '100%' }} xs={0} sm={12}>
+                        <Col style={{ height: '100%' }} xs={0} sm={12} className={stadisticStyles}>
                             <img style={{ maxHeight: '100%', maxWidth: '100%' }} alt={`${selectedCar.maker} ${selectedCar.model}`} src={selectedCar.imageUrl} />
                         </Col>
                         <Col xs={0} sm={12}>
                             <Statistic
+                                className={stadisticStyles}
                                 title="Rendimiento"
                                 value={lastRecord.kpl}
                                 valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
@@ -77,13 +82,14 @@ const Home = ({ cars }) => {
                     </Card>
                 </Col>
                 <Col style={{ height: '100%', padding: 4 }} xs={24} sm={0} >
-                    <Card bodyStyle={cardStyles}>
+                    <Card bodyStyle={cardStyles} className={stadisticStyles}>
                         <img style={{ maxHeight: '100%', maxWidth: '100%' }} alt={`${selectedCar.maker} ${selectedCar.model}`} src={selectedCar.imageUrl} />
                     </Card>
                 </Col>
                 <Col xs={24} sm={0} style={{ padding: 4 }} >
                     <Card bodyStyle={cardStyles}>
                         <Statistic
+                            className={stadisticStyles}
                             title="Rendimiento"
                             value={lastRecord.kpl}
                             valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
@@ -97,6 +103,7 @@ const Home = ({ cars }) => {
                 <Col xs={24} sm={12} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
+                            className={stadisticStyles}
                             title="Viaje hasta ahora"
                             value={`${average.wholeTrip}K`}
                             prefix={<Icon type="car" />}
@@ -107,6 +114,7 @@ const Home = ({ cars }) => {
                 <Col xs={24} sm={12} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
+                            className={stadisticStyles}
                             title="Costo por Km"
                             value={lastRecord.cpk}
                             valueStyle={{ color: lastRecord.cpk < average.cpk ? '#3f8600' : '#cf1322' }}
@@ -120,6 +128,7 @@ const Home = ({ cars }) => {
                 <Col xs={24} sm={12} style={{ padding: 4 }} >
                     <Card bodyStyle={cardStyles}>
                         <Statistic
+                            className={stadisticStyles}
                             title="Ultimo Gasto"
                             value={lastRecord.cost}
                             valueStyle={{ color: lastRecord.cost < average.cost ? '#3f8600' : '#cf1322' }}
@@ -131,6 +140,7 @@ const Home = ({ cars }) => {
                 <Col xs={24} sm={12} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
+                            className={stadisticStyles}
                             title="Ultimo Viaje"
                             value={lastRecord.trip}
                             valueStyle={{ color: lastRecord.trip > average.trip ? '#3f8600' : '#cf1322' }}
@@ -144,6 +154,7 @@ const Home = ({ cars }) => {
                 <Col xs={24} style={{ padding: 4 }}>
                     <Card bodyStyle={cardStyles}>
                         <Statistic
+                            className={stadisticStyles}
                             title="Promedio de Recarga"
                             value={lastRecord.volume}
                             valueStyle={{ color: lastRecord.volume < average.volume ? '#3f8600' : '#cf1322' }}
