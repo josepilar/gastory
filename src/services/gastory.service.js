@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { DOCUMENT_KEY } from '../constants';
-
 import { getUserInformation } from '../helpers/identity_helper';
 
 export function setUpAxiosIdentity(auth) {
+  axios.defaults.baseURL = 'https://gastory-api.herokuapp.com';
+  // axios.defaults.baseURL = 'http://localhost:3001';
   if (!axios.defaults.headers.common['user-id']) {
     axios.defaults.headers.common['user-id'] = getUserInformation().googleId;
   }
