@@ -1,109 +1,92 @@
-/* global gapi */
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { Layout, Menu, Button, Row, Col, Spin, Avatar, Icon, Empty } from 'antd';
-import GoogleLogin, { GoogleLogout } from 'react-google-login';
+import { Route, Link, Redirect, withRouter } from "react-router-dom";
+import { css } from 'emotion';
+import { Layout, Menu, Button, Row, Col, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 import './App.css';
 
 import Home from './components/Home';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import ForgotPassword from './components/ForgotPassword';
 
-import { setUpAxiosIdentity, getCars } from './services/gastory.service';
-import { getUserInformation } from './helpers/identity_helper';
+import { setAuthToken, getCars } from './services/gastory.service';
+import { getUserInformation, deleteUserInformation } from './helpers/identity_helper';
 import { getDate } from './helpers/date.helper';
-import { CLIENT_ID } from './constants';
 
-const AuthContext = React.createContext({});
+import AuthContext from './contexts/AuthContext';
 
-function App() {
+function App({ location }) {
 
-  const [auth, setAuth] = useState({ user: {}, isLoggedIn: false });
+  const [auth, setAuth] = useState();
   const [cars, setCars] = useState();
-
-  const setupAuthenticationData = async (data) => {
-    if (data) {
-      setUpAxiosIdentity();
-      setAuth({ ...auth, data: data.tokenObj, user: data.profileObj, isLoggedIn: true });
-    }
-  }
-
-
-  const responseGoogle = async () => {
-    const userInfo = gapi.auth2.getAuthInstance().currentUser.je;
-    window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
-    window.location.reload();
-  };
+  const [selectedCar, setSelectedCar] = useState('');
 
   useEffect(() => {
     const userInfo = getUserInformation();
-    if (userInfo) setupAuthenticationData(userInfo);
 
     const getCarsData = async () => {
       const data = await getCars();
       setCars(data);
+      setSelectedCar(data?.find(car => car.default)?._id);
+    };
+    if (userInfo) {
+      setAuthToken(userInfo.token);
+      setAuth(userInfo)
+      getCarsData();
+    } else {
+      setAuth({ isLoggedIn: false });
     }
-
-    getCarsData();
   }, []);
 
-
   const logout = () => {
-    setAuth({ user: {}, isLoggedIn: false });
-    window.localStorage.removeItem('userInfo');
+    setAuth({ user: {}, isLoggedIn: false, token: '' });
+    deleteUserInformation();
   };
 
   return (
-    <Router>
-      <AuthContext.Provider value={auth}>
-        <Layout className='Container'>
-          <Layout.Header className='header'>
-            <Row>
-              <Col span={15}>
-                <Avatar src={auth.user.imageUrl} icon="user" />
-                <span style={{ marginLeft: 16, verticalAlign: 'middle' }}>
-                  {auth.isLoggedIn ? `Welcome ${auth.user.givenName}` : 'Please login to start'}
-                </span>
-              </Col>
-              <Col span={4} offset={5}>
-                {auth.isLoggedIn && <GoogleLogout
-                  onLogoutSuccess={logout}
-                  render={renderProps => (<Button onClick={renderProps.onClick} disabled={renderProps.disabled}>Logout</Button>)}
-                />}
-              </Col>
-            </Row>
-          </Layout.Header>
+    <AuthContext.Provider value={{ auth, setAuth }}>
+      <Layout className='Container'>
+        <Layout.Header className='header'>
+          <Row>
+            <Col xs={20}>
+              <Avatar src={auth?.user?.profilePicture} icon={<UserOutlined />} />
+              <span style={{ marginLeft: 16, verticalAlign: 'middle' }}>
+                {auth?.isLoggedIn ? `Welcome ${auth?.user?.displayName}` : 'Please login to start'}
+              </span>
+            </Col>
+            <Col xs={4} className={css`text-align: right;`}>
+              {auth?.isLoggedIn && <Button onClick={logout}>Logout</Button>}
+            </Col>
+          </Row>
+        </Layout.Header>
+        <Layout>
+          {auth?.isLoggedIn && <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
+            <Menu mode='inline' className='Side' defaultOpenKeys={['cars']} selectedKeys={[selectedCar]}>
+              <Menu.SubMenu title='History'>
+                <Menu.Item>Test1</Menu.Item>
+                <Menu.Item>Test2</Menu.Item>
+              </Menu.SubMenu>
+              {cars && cars.length && <Menu.SubMenu title='Cars' key="cars" inlineCollapsed="false">
+                {cars && cars.map(car => <Menu.Item key={car._id} onClick={() => setSelectedCar(car._id)} >{car.maker} - {car.model}</Menu.Item>)}
+              </Menu.SubMenu>}
+            </Menu>
+          </Layout.Sider>}
           <Layout>
-            {auth.isLoggedIn && <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
-              <Menu mode='inline' className='Side' defaultOpenKeys={['cars']}>
-                <Menu.SubMenu title='History'>
-                  <Menu.Item>Test1</Menu.Item>
-                  <Menu.Item>Test2</Menu.Item>
-                </Menu.SubMenu>
-                {cars && cars.length && <Menu.SubMenu title='Cars' key="cars" inlineCollapsed="false">
-                  {cars && cars.map(car => <Menu.Item key={car._id}>{car.model}</Menu.Item>)}
-                </Menu.SubMenu>}
-              </Menu>
-            </Layout.Sider>}
-            <Layout>
-              <Layout.Content className='MainContent'>
-                {auth.isLoggedIn ? (
-                  <Route exact path="/" render={props => <Home {...props} cars={cars} />} />
-                ) :
-                  <Empty description={
-                    <GoogleLogin
-                      clientId={CLIENT_ID}
-                      onSuccess={responseGoogle}
-                      scope="https://www.googleapis.com/auth/userinfo.profile"
-                      render={renderProps => (<Button type="primary" onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon type="google" />Login</Button>)} />
-                  } image={<span />} />
-                }
-              </Layout.Content>
-            </Layout>
+            <Layout.Content className='MainContent'>
+              <Route exact path="/" render={props => <Home {...props} cars={cars} carSelected={selectedCar} />} />
+              {auth && auth?.isLoggedIn && <Route render={props => <Redirect to="/" />} />}
+              <Route exact path="/login" render={props => <Login {...props} />} />
+              <Route exact path="/signup" render={props => <Signup {...props} />} />
+              <Route exact path="/whoopsis" render={props => <ForgotPassword {...props} />} />
+              {auth && !auth?.isLoggedIn && (location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/whoopsis') && <Redirect to="/login" />}
+            </Layout.Content>
           </Layout>
         </Layout>
-      </AuthContext.Provider>
-    </Router>
+      </Layout>
+    </AuthContext.Provider>
   );
 }
 
-export default App;
+export default withRouter(App);
