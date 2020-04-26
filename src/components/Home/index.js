@@ -26,17 +26,17 @@ const cartStyles = css`
     display: inline-block;
     width: 100%;
 `;
-// 5ea131bdb7fce475d0b2d262
+
 const Home = ({ cars, carSelected }) => {
     const [selectedCar, setSelectedCar] = useState(carSelected);
-    const [carWithTrips, setCarsWithTrips] = useState(cars);
+    const [carsWithTrips, setCarsWithTrips] = useState();
     const [tripsLoading, setTripsLoading] = useState(false);
 
     useEffect(() => {
-        if (carWithTrips && cars) {
-            setSelectedCar(carWithTrips.find(car => car._id === carSelected) || carWithTrips.find(car => car.default) || cars[0]);
+        if (carsWithTrips && cars) {
+            setSelectedCar(carsWithTrips.find(car => car._id === carSelected) || carsWithTrips.find(car => car.default) || cars[0]);
         }
-    }, [carSelected, carWithTrips, cars]);
+    }, [carSelected, carsWithTrips, cars]);
 
     useEffect(() => {
         setTripsLoading(true);
@@ -52,11 +52,12 @@ const Home = ({ cars, carSelected }) => {
                 setTripsLoading(false);
             }
         }
+
         if (cars) loadTrips();
     }, [cars]);
 
     if (tripsLoading) { return <div style={loadingStyles}> <Spin size="large" style={{ paddingTop: 150 }} /></div>; }
-    if (!carWithTrips || !carWithTrips.length) {
+    if (!carsWithTrips || !carsWithTrips.length) {
         return <Empty description="No Cars Found" image={<CarOutlined style={{ fontSize: '5em' }} />} style={{ paddingTop: 100 }} >
             <Button type="primary">Add one now</Button>
         </Empty>

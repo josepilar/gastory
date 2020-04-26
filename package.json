@@ -11,6 +11,7 @@
     "antd": "^4.1.5",
     "axios": "^0.19.2",
     "babel-plugin-import": "^1.13.0",
+    "blueimp-md5": "^2.13.0",
     "customize-cra": "^0.2.12",
     "emotion": "^10.0.27",
     "react": "^16.13.1",
