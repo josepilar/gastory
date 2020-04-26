@@ -4,6 +4,8 @@ import { withRouter, Link } from 'react-router-dom';
 import { Button, Row, Form, Input, Col, Card, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
+import { biggerFontSizeMobile } from '../../global.styles';
+
 import { login } from '../../services/gastory.service';
 import { setUserInformation } from '../../helpers/identity_helper';
 
@@ -32,6 +34,7 @@ const Login = ({ history }) => {
             onFinish={handleLogin}
           >
             <Form.Item
+              className={biggerFontSizeMobile}
               name="username"
               rules={[{ required: true, message: 'Please input your username!' }]}
             >
@@ -39,6 +42,7 @@ const Login = ({ history }) => {
             </Form.Item>
 
             <Form.Item
+              className={biggerFontSizeMobile}
               name="password"
               rules={[{ required: true, message: 'Please input your password!' }]}
             >
