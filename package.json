@@ -5,6 +5,7 @@
     "name": "Pilar Perez"
   },
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "@ant-design/icons": "^4.0.6",
     "antd": "^4.1.5",
