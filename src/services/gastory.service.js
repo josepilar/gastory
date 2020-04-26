@@ -2,9 +2,6 @@ import axios from 'axios';
 
 import { deleteUserInformation } from '../helpers/identity_helper';
 
-// axios.defaults.baseURL = 'http://localhost:3001';/
-axios.defaults.baseURL = 'https://gastory-api.herokuapp.com';
-
 export function setAuthToken(token) {
   axios.defaults.headers.common['Authorization'] = token;
 }
