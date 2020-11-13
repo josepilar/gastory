@@ -178,7 +178,16 @@ const Home = ({ cars, carSelected }) => {
                     </Card>
                 </Col>
             </Row>
-            <Button style={{ position: 'fixed', bottom: 5, right: 5, height: '3.3em', width: '3.3em' }} type="primary" shape="circle" icon={<PlusOutlined />} size="large" />
+            <Button className={css`
+                @media only screen and (min-width: 992px) {
+                    display: none;
+                }
+                position: fixed;
+                bottom: calc(8% + 25px);
+                right: 25px;
+                height: 3.6em;
+                width: 3.6em;
+            `} type="primary" shape="circle" icon={<PlusOutlined />} />
         </div>
     );
 };

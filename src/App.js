@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Link, Redirect, withRouter } from "react-router-dom";
 import md5 from 'blueimp-md5';
 import { css } from 'emotion';
-import { Layout, Menu, Button, Row, Col, Avatar } from 'antd';
+import { Layout, Button, Row, Col, Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 import './App.css';
 
-import Home from './components/Home';
-import Login from './components/Login';
-import Signup from './components/Signup';
-import ForgotPassword from './components/ForgotPassword';
-import Cars from './components/Cars';
+import Routes from './components/Routes';
+import DesktopNavigation from './components/Navigation/DesktopNavigation';
+import MobileNavigation from './components/Navigation/MobileNavigation';
 
 import { setAuthToken, getCars } from './services/gastory.service';
 import { getUserInformation, deleteUserInformation } from './helpers/identity_helper';
 
 import AuthContext from './contexts/AuthContext';
 
-function App({ location }) {
+function App() {
 
   const [auth, setAuth] = useState();
   const [cars, setCars] = useState();
+  const [initialized, setInitialized] = useState(false);
   const [selectedCar, setSelectedCar] = useState('');
 
   useEffect(() => {
@@ -39,6 +37,7 @@ function App({ location }) {
     } else {
       setAuth({ isLoggedIn: false });
     }
+    setInitialized({ initialized: true });
   }, []);
 
   const logout = () => {
@@ -47,7 +46,7 @@ function App({ location }) {
   };
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth, initialized }}>
       <Layout className='Container'>
         <Layout.Header className='header'>
           <Row>
@@ -63,32 +62,19 @@ function App({ location }) {
           </Row >
         </Layout.Header >
         <Layout>
-          {auth?.isLoggedIn && <Layout.Sider breakpoint="lg" collapsedWidth="0" width={200}>
-            <Menu mode='inline' className='Side' defaultOpenKeys={['cars', 'home']} selectedKeys={[selectedCar]}>
-              <Menu.SubMenu title='Home' key="home">
-                <Menu.Item><Link to="/cars">Profile</Link></Menu.Item>
-                <Menu.Item><Link to="/cars">Cars</Link></Menu.Item>
-              </Menu.SubMenu>
-              {cars && cars.length && <Menu.SubMenu title='Select Car' key="cars" inlineCollapsed="false">
-                {cars && cars.map(car => <Menu.Item key={car._id} onClick={() => setSelectedCar(car._id)} ><Link to="/">{car.maker} - {car.model}</Link></Menu.Item>)}
-              </Menu.SubMenu>}
-            </Menu>
-          </Layout.Sider>}
-          <Layout>
+          <DesktopNavigation cars={cars} setSelectedCar={setSelectedCar} auth={auth} />
+          <Layout css={css`@media only screen and (max-width: 992px) {
+              margin-bottom: 8%;
+            }`}>
             <Layout.Content className='MainContent'>
-              <Route exact path="/" render={props => <Home {...props} cars={cars} carSelected={selectedCar} />} />
-              <Route exact path="/cars" render={props => <Cars {...props} cars={cars} />} />
-              {auth && auth?.isLoggedIn && (location.pathname === '/login' && location.pathname === '/signup' && location.pathname === '/whoopsis') && <Route render={props => <Redirect to="/" />} />}
-              <Route exact path="/login" render={props => <Login {...props} />} />
-              <Route exact path="/signup" render={props => <Signup {...props} />} />
-              <Route exact path="/whoopsis" render={props => <ForgotPassword {...props} />} />
-              {auth && !auth?.isLoggedIn && (location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/whoopsis') && <Redirect to="/login" />}
+              <Routes cars={cars} selectedCar={selectedCar} initialized={initialized} />
             </Layout.Content>
           </Layout>
         </Layout>
+        <MobileNavigation cars={cars} setSelectedCar={setSelectedCar} auth={auth} />
       </Layout >
     </AuthContext.Provider >
   );
 }
 
-export default withRouter(App);
+export default App;

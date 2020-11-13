@@ -7,9 +7,9 @@ export function getUserInformation() {
 
 export function setUserInformation(data) {
   const auth = {
-    isLoggedIn: data.success,
-    user: data.user,
-    token: data.token
+    isLoggedIn: data?.success,
+    user: data?.user,
+    token: data?.token
   };
   setAuthToken(data.token);
   window.localStorage.setItem('userInfo', JSON.stringify(auth));

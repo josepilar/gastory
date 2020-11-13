@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { css } from 'emotion';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Button, Row, Form, Input, Col, Card, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+
+import AuthContext from '../../contexts/AuthContext';
 
 import { login } from '../../services/gastory.service';
 import { setUserInformation } from '../../helpers/identity_helper';
 
-const Login = ({ history }) => {
+const Login = () => {
 
   const [isError, setIsError] = useState(false);
+  const authContext = useContext(AuthContext);
 
   const handleLogin = async (formData) => {
     const { password, username } = formData;
@@ -20,6 +23,10 @@ const Login = ({ history }) => {
       return setUserInformation(response?.data);
     }
     setIsError(response ? response.status : true);
+  }
+  if (authContext.auth && authContext.auth.isLoggedIn) {
+    // Redirect if the user is already logged in
+    return <Redirect to="/" />;
   }
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { Button, Row, Form, Input, Col, Card, Alert } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { css } from 'emotion';
@@ -28,8 +28,10 @@ const ForgotPassword = () => {
       isTokenValid(isReset).then(resp => {
         setIsValid(resp);
       })
+    } else {
+      return <Redirect to="/"/>;
     }
-  }, []);
+  }, [isReset]);
 
   const sendEmail = async (formData) => {
     await resetPassword(formData?.email);

@@ -1,18 +1,25 @@
 import React, { useContext } from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Form, Input, Button, Row, Col, Card } from 'antd';
 import { css } from 'emotion';
 
 import { signup } from '../../services/gastory.service';
 import { setUserInformation } from '../../helpers/identity_helper';
 
-const Signup = () => {
+import AuthContext from '../../contexts/AuthContext';
 
+const Signup = () => {
+  const authContext = useContext(AuthContext);
   const onValid = async (formData) => {
     const data = await signup(formData);
     setUserInformation(data);
     window.location.reload();
   };
+
+  if (authContext.auth && authContext.auth.isLoggedIn) {
+    // Redirect if the user is already logged in
+    return <Redirect to="/" />;
+  }
 
   return <Row align="middle" justify="center" className={css`margin: 200px 10px; `} >
     <Col xs={24} md={16} lg={10} >
