@@ -64,7 +64,7 @@ function App() {
         <Layout>
           <DesktopNavigation cars={cars} setSelectedCar={setSelectedCar} auth={auth} />
           <Layout css={css`@media only screen and (max-width: 992px) {
-              margin-bottom: 8%;
+              margin-bottom: 10%;
             }`}>
             <Layout.Content className='MainContent'>
               <Routes cars={cars} selectedCar={selectedCar} initialized={initialized} />

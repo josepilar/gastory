@@ -1,21 +1,26 @@
 import React from 'react';
+import { CarTwoTone, DashboardTwoTone,SmileTwoTone, SettingTwoTone } from '@ant-design/icons';
 import { css } from 'emotion';
 import { Layout, Menu } from 'antd';
 import { Link } from "react-router-dom";
 
-const DesktopNavigation = ({ auth, cars, setSelectedCar, selectedCar }) => {
-  return auth?.isLoggedIn ? <div className={css`
-    @media only screen and (min-width: 992px) {
-      display: none;
-    }
-    display: block;
-    width: 100%;
-    background-color: teal;
-    height: 8%;
-    z-index: 3;
-  `} >
-    I am the mobile navbar :)
-  </div> : null;
+import { Wrapper, NavItem } from './MobileNavigation.styles';
+
+const MobileNavigation = ({ auth, cars, setSelectedCar, selectedCar }) => {
+  return auth?.isLoggedIn ? <Wrapper>
+    <NavItem>
+      <DashboardTwoTone twoToneColors="#4b4b4b" />
+    </NavItem>
+    <NavItem>
+      <CarTwoTone twoToneColors="#4b4b4b" />
+    </NavItem>
+    <NavItem>
+      <SmileTwoTone />
+    </NavItem>
+    <NavItem>
+      <SettingTwoTone />
+    </NavItem>
+  </Wrapper> : null;
 }
 
-export default DesktopNavigation;
+export default MobileNavigation;

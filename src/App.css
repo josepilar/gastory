@@ -11,3 +11,7 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+body {
+  background-color: #001529;
+}
