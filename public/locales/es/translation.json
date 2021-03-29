@@ -2,83 +2,83 @@
   "title": "Gastory",
   "home": {
     "general" : {
-      "addNewCar": "Add new car"
+      "addNewCar": "Agregar nuevo carro"
     },
     "header": {
-      "welcome": "Welcome",
-      "logout": "Logout",
-      "login": "Please login to start" 
+      "welcome": "Bienvenido",
+      "logout": "Salir",
+      "login": "Ingresar" 
     },
     "nav" : {
       "home" : {
         "title" : "Home",
-        "profile" : "Profile",
-        "cars" : "Cars"
+        "profile" : "Perfil",
+        "cars" : "Autos"
       },
       "carList" : {
-        "title" : "Car List"
+        "title" : "Lista de autos"
       }
     },
     "cars": {
       "summary": {
-        "efficiency": "Efficiency",
-        "traveled": "Traveled so far",
-        "costPerKm": "Cost per KM",
-        "lastExpense": "Last expense",
-        "lastTrip": "Last trip",
-        "averageFuelUp": "Average fuel up"
+        "efficiency": "Rendimiento",
+        "traveled": "Viaje hasta ahora",
+        "costPerKm": "Costo por KM",
+        "lastExpense": "Ultimo gasto",
+        "lastTrip": "Ultimo viaje",
+        "averageFuelUp": "Recarga promedio"
         
       }
     }
   },
   "forgotPassword": {
-    "title": "Forgot password",
-    "emailError": "Please input your email!",
-    "email": "Email",
-    "send": "Send email",
-    "login": "Login",
-    "alertMessage": "Email sent",
-    "alertDescription": "Check your inbox, we have sent you a reset link!",
+    "title": "Olvidé mi contraseña",
+    "emailError": "Por favor ingresa tu correo",
+    "email": "Correo",
+    "send": "Mandar correo",
+    "login": "Ingresar",
+    "alertMessage": "Correo enviado",
+    "alertDescription": "Verifica tu bandeja de entrada, hemos enviado un link para reestablecer tu contraseña!",
     "passwordReset": {
-      "title": "Choose Password",
-      "password": "Password",
-      "confirm": "Confirm password",
-      "requiredPassword": "Please input your password!",
-      "confirmPasswordRequired": "Please confirm your password!",
-      "passwordsMissmatch": "The two passwords that you entered do not match!",
-      "alertPasswordChangedTitle": "Change password",
-      "alertPasswordChangedDescription": "Change password",
-      "alertPasswordExpiredTitle": "Change password",
-      "alertPasswordExpiredDescription": "Change password"
+      "title": "Cambiar contraseña",
+      "password": "Contraseña",
+      "confirm": "Confirmar contraseña",
+      "requiredPassword": "Por favor ingresa tu contraseña!",
+      "confirmPasswordRequired": "Por favor verica tu contraseña!",
+      "passwordsMissmatch": "Las dos contraseñas no coinciden",
+      "alertPasswordChangedTitle": "Contraseña cambiada",
+      "alertPasswordChangedDescription": "Tu contraseña ha sido cambiado con exito.",
+      "alertPasswordExpiredTitle": "Liga expirada",
+      "alertPasswordExpiredDescription": "Esta liga ha expirado o ya ha sido utilizada."
     }
   },
   "login": {
-    "title": "Login",
-    "username": "Username",
-    "password": "Password",
-    "usernameRequired": "Please input your username!",
-    "passwordRequired": "Please input your password!",
-    "forgotPassword": "Forgot your password?",
-    "login": "Log in",
-    "signup": "Sign up",
-    "loginFailed401": "Username or password incorrect, try again.",
-    "loginFailed": "Something went wrong..."
+    "title": "Ingresar",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "usernameRequired": "Por favor ingresa tu nombre de usuario!",
+    "passwordRequired": "Por favor ingresa tu contraseña!",
+    "forgotPassword": "Olvidaste tu contraseña?",
+    "login": "Ingresar",
+    "signup": "Registrarse",
+    "loginFailed401": "usuario o contraseña incorrectos, intentalo nuevamente.",
+    "loginFailed": "Algo salio mal..."
   },
   "signup": {
-    "title": "Sign up",
-    "name": "Display Name",
-    "nameRequired": "Please input your name!",
-    "email": "Email",
-    "emailRequired": "Please input your email!",
-    "forgotPassword": "Forgot your password?",
-    "username": "Username",
-    "usernameRequired": "Please input your username!",
-    "password": "Password",
-    "passwordRequired": "Please input your password!",
-    "confirmPassword": "Confirm password",
-    "confirmPasswordRequired": "Please confirm your password!",
-    "confirmPasswordMissmatch": "The two passwords that you entered do not match!",
-    "signup": "Sign up",
-    "login": "Login"
+    "title": "Registrarse",
+    "name": "Nombre",
+    "nameRequired": "Por favor ingresa tu nombre!",
+    "email": "Correo",
+    "emailRequired": "Por favor ingresa tu correo!",
+    "forgotPassword": "Olvidaste tu contraseña?",
+    "username": "Usuario",
+    "usernameRequired": "Por favor ingresa tu usuario!",
+    "password": "Contraseña",
+    "passwordRequired": "Por favor ingresa tu contraseña!",
+    "confirmPassword": "Confirma tu contraseña",
+    "confirmPasswordRequired": "Por favor confirma tu contraseña!",
+    "confirmPasswordMissmatch": "Las dos contraseñas no coinciden!",
+    "signup": "Registrarse",
+    "login": "Ingresar"
   }
 }

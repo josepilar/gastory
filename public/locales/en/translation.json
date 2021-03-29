@@ -46,10 +46,10 @@
       "requiredPassword": "Please input your password!",
       "confirmPasswordRequired": "Please confirm your password!",
       "passwordsMissmatch": "The two passwords that you entered do not match!",
-      "alertPasswordChangedTitle": "Change password",
-      "alertPasswordChangedDescription": "Change password",
-      "alertPasswordExpiredTitle": "Change password",
-      "alertPasswordExpiredDescription": "Change password"
+      "alertPasswordChangedTitle": "Password changed",
+      "alertPasswordChangedDescription": "Your password has been succefully changed.",
+      "alertPasswordExpiredTitle": "Expired",
+      "alertPasswordExpiredDescription": "This reset link has expired or has been already used."
     }
   },
   "login": {
