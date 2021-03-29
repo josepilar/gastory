@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { withRouter, Link, Redirect } from 'react-router-dom';
 import { Form, Input, Button, Row, Col, Card } from 'antd';
 import { css } from 'emotion';
+import { useTranslation } from 'react-i18next';
 
 import { signup } from '../../services/gastory.service';
 import { setUserInformation } from '../../helpers/identity_helper';
@@ -10,6 +11,7 @@ import AuthContext from '../../contexts/AuthContext';
 
 const Signup = () => {
   const authContext = useContext(AuthContext);
+  const { t } = useTranslation();
   const onValid = async (formData) => {
     const data = await signup(formData);
     setUserInformation(data);
@@ -23,60 +25,60 @@ const Signup = () => {
 
   return <Row align="middle" justify="center" className={css`margin: 200px 10px; `} >
     <Col xs={24} md={16} lg={10} >
-      <Card title="Sign up" >
+      <Card title={t('signup.title')} >
         <Form
           name="signup"
           initialValues={{ remember: false }}
           onFinish={onValid}
         >
           <Form.Item
-            label="Display name"
+            label={t('signup.name')}
             name="displayName"
-            rules={[{ required: true, message: 'Please input your name!' }]}
+            rules={[{ required: true, message: t('signup.nameRequired') }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Email"
+            label={t('signup.email')}
             name="email"
-            rules={[{ required: true, type: 'email', message: 'Please input your email!' }]}
+            rules={[{ required: true, type: 'email', message: t('signup.emailRequired') }]}
           >
             <Input type="email" />
           </Form.Item>
 
           <Form.Item
-            label="Username"
+            label={t('signup.username')}
             name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: t('signup.usernameRequired') }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label={t('signup.password')}
             name="password"
-            rules={[{ required: true, message: 'Please input your password!' }]}
+            rules={[{ required: true, message: t('signup.passwordRequired') }]}
           >
             <Input.Password />
           </Form.Item>
 
           <Form.Item
             name="confirm"
-            label="Confirm Password"
+            label={t('signup.confirmPassword')}
             dependencies={['password']}
             hasFeedback
             rules={[
               {
                 required: true,
-                message: 'Please confirm your password!',
+                message: t('signup.confirmPasswordRequired'),
               },
               ({ getFieldValue }) => ({
                 validator(rule, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject('The two passwords that you entered do not match!');
+                  return Promise.reject(t('signup.confirmPasswordMissmatch'));
                 },
               }),
             ]}
@@ -85,11 +87,11 @@ const Signup = () => {
           </Form.Item>
           <Form.Item >
             <Button type="primary" htmlType="submit">
-              Sign up
+              {t('signup.signup')}
             </Button>
           </Form.Item>
           <Form.Item>
-            <Link to="/login" >Login</Link>
+            <Link to="/login" >{t('signup.login')}</Link>
           </Form.Item>
         </Form >
       </Card>

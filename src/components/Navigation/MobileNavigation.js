@@ -1,8 +1,5 @@
 import React from 'react';
 import { CarTwoTone, DashboardTwoTone,SmileTwoTone, SettingTwoTone } from '@ant-design/icons';
-import { css } from 'emotion';
-import { Layout, Menu } from 'antd';
-import { Link } from "react-router-dom";
 
 import { Wrapper, NavItem } from './MobileNavigation.styles';
 

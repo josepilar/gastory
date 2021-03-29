@@ -3,6 +3,7 @@ import md5 from 'blueimp-md5';
 import { css } from 'emotion';
 import { Layout, Button, Row, Col, Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 import './App.css';
 
@@ -21,7 +22,7 @@ function App() {
   const [cars, setCars] = useState();
   const [initialized, setInitialized] = useState(false);
   const [selectedCar, setSelectedCar] = useState('');
-
+  const { t } = useTranslation();
   useEffect(() => {
     const userInfo = getUserInformation();
 
@@ -53,11 +54,11 @@ function App() {
             <Col xs={20}>
               <Avatar src={auth?.user?.profilePicture || (auth?.user?.email && `https://www.gravatar.com/avatar/${md5(auth?.user?.email.trim().toLowerCase())}`)} icon={<UserOutlined />} />
               <span style={{ marginLeft: 16, verticalAlign: 'middle' }}>
-                {auth?.isLoggedIn ? `Welcome ${auth?.user?.displayName}` : 'Please login to start'}
+                {auth?.isLoggedIn ? `${t('home.header.welcome')} ${auth?.user?.displayName}` : t('home.header.login')}
               </span>
             </Col >
             <Col xs={4} className={css`text-align: right;`}>
-              {auth?.isLoggedIn && <Button onClick={logout}>Logout</Button>}
+              {auth?.isLoggedIn && <Button onClick={logout}>{t('home.header.logout')}</Button>}
             </Col>
           </Row >
         </Layout.Header >

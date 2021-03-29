@@ -4,6 +4,7 @@ import { Button, Row, Form, Input, Col, Card, Alert } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { css } from 'emotion';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { useQuery } from '../../helpers/router.helper';
 
@@ -22,14 +23,13 @@ const ForgotPassword = () => {
   const [successfullySent, SetSuccessfullySent] = useState(false);
   const [successfullyChanged, SetSuccessfullyChanged] = useState(false);
   const [isValid, setIsValid] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isReset) {
       isTokenValid(isReset).then(resp => {
         setIsValid(resp);
       })
-    } else {
-      return <Redirect to="/"/>;
     }
   }, [isReset]);
 
@@ -46,7 +46,7 @@ const ForgotPassword = () => {
   return (
     <Row align="middle" justify="center" className={css`margin: 200px 10px;`}>
       <Col xs={24} md={16} lg={10} >
-        {!isReset && <Card title="Forgot password">
+        {!isReset && <Card title={t('forgotPassword.title')}>
           <Form
             name="signup"
             initialValues={{ remember: false }}
@@ -54,58 +54,58 @@ const ForgotPassword = () => {
           >
             <Form.Item
               name="email"
-              rules={[{ required: true, type: 'email', message: 'Please input your email!' }]}
+              rules={[{ required: true, type: 'email', message: t('forgotPassword.emailError') }]}
             >
-              <Input prefix={<UserOutlined />} placeholder="email" />
+              <Input prefix={<UserOutlined />} placeholder={t('forgotPassword.email')} />
             </Form.Item>
 
             {successfullySent && <div className={css`margin-bottom: 25px;`}>
               <Alert
-                message="Email sent"
-                description="Check your inbox, we have sent you a reset link!"
+                message={t('forgotPassword.alertMessage')}
+                description={t('forgotPassword.alertDescription')}
                 type="success" />
             </div>}
 
             <Form.Item >
               <Button type="primary" htmlType="submit">
-                Send email
+                {t('forgotPassword.send')}
               </Button>
             </Form.Item>
             <Form.Item>
-              <Link to="/login" >Login</Link>
+              <Link to="/login" >{t('forgotPassword.login')}</Link>
             </Form.Item>
           </Form >
         </Card>}
-        {isReset && isValid && <Card title="Choose Password">
+        {isReset && isValid && <Card title={t('forgotPassword.passwordReset.title')}>
           <Form
             name="signup"
             initialValues={{ remember: false }}
             onFinish={handleChangePassword}
           >
             <Form.Item
-              label="Password"
+              label={t('forgotPassword.passwordReset.password')}
               name="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[{ required: true, message: t('forgotPassword.passwordReset.requiredPassword')}]}
             >
               <Input.Password />
             </Form.Item>
 
             <Form.Item
               name="confirm"
-              label="Confirm Password"
+              label={t('forgotPassword.passwordReset.confirmPassword')}
               dependencies={['password']}
               hasFeedback
               rules={[
                 {
                   required: true,
-                  message: 'Please confirm your password!',
+                  message: t('forgotPassword.passwordReset.confirmPasswordRequired'),
                 },
                 ({ getFieldValue }) => ({
                   validator(rule, value) {
                     if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject('The two passwords that you entered do not match!');
+                    return Promise.reject(t('forgotPassword.passwordReset.passwordsMissmatch'));
                   },
                 }),
               ]}
@@ -114,24 +114,24 @@ const ForgotPassword = () => {
             </Form.Item>
             {successfullyChanged && <div className={css`margin-bottom: 25px;`}>
               <Alert
-                message="Password changed"
-                description="Your password has been succefully changed."
+                message={t('forgotPassword.passwordReset.alertPasswordChangedTitle')}
+                description={t('forgotPassword.passwordReset.alertPasswordChangedDescription')}
                 type="success" />
             </div>}
             <Form.Item >
               <Button type="primary" htmlType="submit">
-                Change password
+              {t('forgotPassword.passwordReset.changePassword')}
               </Button>
             </Form.Item>
             <Form.Item>
-              <Link to="/login" >Login</Link>
+              <Link to="/login" >{t('forgotPassword.login')}</Link>
             </Form.Item>
           </Form >
         </Card>}
         {isReset && !isValid && <div className={css`background-color: white; padding: 30px`}>
           <Alert
-            message="Expired"
-            description="This reset link has expired or has been already used."
+            message={t('forgotPassword.passwordReset.alertPasswordExpiredTitle')}
+            description={t('forgotPassword.passwordReset.alertPasswordExpiredDescription')}
             type="error" />
         </div>}
       </Col>

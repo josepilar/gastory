@@ -3,6 +3,7 @@ import { css } from 'emotion';
 import { Statistic, Card, Row, Col, Empty, Tag, Divider, Spin, Button, message } from 'antd';
 import { getAverage } from '../../helpers/home.helper';
 import { CarOutlined, DashboardOutlined, ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 import { getTrips } from '../../services/gastory.service';
 
@@ -18,20 +19,21 @@ const cardStyles = {
 }
 
 const stadisticStyles = css`
-    text-align: center;
-    vertical-align: middle;
+text-align: center;
+vertical-align: middle;
 `;
 const cartStyles = css`
-    ${stadisticStyles}
-    display: inline-block;
-    width: 100%;
+${stadisticStyles}
+display: inline-block;
+width: 100%;
 `;
 
 const Home = ({ cars, carSelected }) => {
     const [selectedCar, setSelectedCar] = useState(carSelected);
     const [carsWithTrips, setCarsWithTrips] = useState();
     const [tripsLoading, setTripsLoading] = useState(false);
-
+    const { t } = useTranslation();
+    
     useEffect(() => {
         if (carsWithTrips && cars) {
             setSelectedCar(carsWithTrips.find(car => car._id === carSelected) || carsWithTrips.find(car => car.default) || cars[0]);
@@ -86,7 +88,7 @@ const Home = ({ cars, carSelected }) => {
                         </Col>
                         <Col xs={0} sm={12} className={cartStyles}>
                             <Statistic
-                                title="Rendimiento"
+                                title={t('home.cars.summary.efficiency')}
                                 value={lastRecord.kpl}
                                 valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
                                 prefix={lastRecord.kpl > average.kpl ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -104,7 +106,7 @@ const Home = ({ cars, carSelected }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             className={stadisticStyles}
-                            title="Rendimiento"
+                            title={t('home.cars.summary.efficiency')}
                             value={lastRecord.kpl}
                             valueStyle={{ color: lastRecord.kpl > average.kpl ? '#3f8600' : '#cf1322' }}
                             prefix={lastRecord.kpl > average.kpl ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -118,7 +120,7 @@ const Home = ({ cars, carSelected }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             className={stadisticStyles}
-                            title="Viaje hasta ahora"
+                            title={t('home.cars.summary.traveled')}
                             value={`${average.wholeTrip}K`}
                             prefix={<CarOutlined />}
                             suffix={<Tag color="#87d068">Kms</Tag>}
@@ -129,7 +131,7 @@ const Home = ({ cars, carSelected }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             className={stadisticStyles}
-                            title="Costo por Km"
+                            title={t('home.cars.summary.costPerKm')}
                             value={lastRecord.cpk}
                             valueStyle={{ color: lastRecord.cpk < average.cpk ? '#3f8600' : '#cf1322' }}
                             prefix={lastRecord.cpk > average.cpk ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -143,7 +145,7 @@ const Home = ({ cars, carSelected }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             className={stadisticStyles}
-                            title="Ultimo Gasto"
+                            title={t('home.cars.summary.lastExpense')}
                             value={lastRecord.cost}
                             valueStyle={{ color: lastRecord.cost < average.cost ? '#3f8600' : '#cf1322' }}
                             prefix={lastRecord.cost > average.cost ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -155,7 +157,7 @@ const Home = ({ cars, carSelected }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             className={stadisticStyles}
-                            title="Ultimo Viaje"
+                            title={t('home.cars.summary.lastTrip')}
                             value={lastRecord.trip}
                             valueStyle={{ color: lastRecord.trip > average.trip ? '#3f8600' : '#cf1322' }}
                             prefix={lastRecord.trip > average.trip ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -169,7 +171,7 @@ const Home = ({ cars, carSelected }) => {
                     <Card bodyStyle={cardStyles}>
                         <Statistic
                             className={stadisticStyles}
-                            title="Promedio de Recarga"
+                            title={t('home.cars.summary.averageFuelUp')}
                             value={lastRecord.volume}
                             valueStyle={{ color: lastRecord.volume < average.volume ? '#3f8600' : '#cf1322' }}
                             prefix={lastRecord.volume > average.volume ? <ArrowUpOutlined /> : <ArrowDownOutlined />}

@@ -1,0 +1,84 @@
+{
+  "title": "Gastory",
+  "home": {
+    "general" : {
+      "addNewCar": "Add new car"
+    },
+    "header": {
+      "welcome": "Welcome",
+      "logout": "Logout",
+      "login": "Please login to start" 
+    },
+    "nav" : {
+      "home" : {
+        "title" : "Home",
+        "profile" : "Profile",
+        "cars" : "Cars"
+      },
+      "carList" : {
+        "title" : "Car List"
+      }
+    },
+    "cars": {
+      "summary": {
+        "efficiency": "Efficiency",
+        "traveled": "Traveled so far",
+        "costPerKm": "Cost per KM",
+        "lastExpense": "Last expense",
+        "lastTrip": "Last trip",
+        "averageFuelUp": "Average fuel up"
+        
+      }
+    }
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "emailError": "Please input your email!",
+    "email": "Email",
+    "send": "Send email",
+    "login": "Login",
+    "alertMessage": "Email sent",
+    "alertDescription": "Check your inbox, we have sent you a reset link!",
+    "passwordReset": {
+      "title": "Choose Password",
+      "password": "Password",
+      "confirm": "Confirm password",
+      "requiredPassword": "Please input your password!",
+      "confirmPasswordRequired": "Please confirm your password!",
+      "passwordsMissmatch": "The two passwords that you entered do not match!",
+      "alertPasswordChangedTitle": "Change password",
+      "alertPasswordChangedDescription": "Change password",
+      "alertPasswordExpiredTitle": "Change password",
+      "alertPasswordExpiredDescription": "Change password"
+    }
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "usernameRequired": "Please input your username!",
+    "passwordRequired": "Please input your password!",
+    "forgotPassword": "Forgot your password?",
+    "login": "Log in",
+    "signup": "Sign up",
+    "loginFailed401": "Username or password incorrect, try again.",
+    "loginFailed": "Something went wrong..."
+  },
+  "signup": {
+    "title": "Sign up",
+    "name": "Display Name",
+    "nameRequired": "Please input your name!",
+    "email": "Email",
+    "emailRequired": "Please input your email!",
+    "forgotPassword": "Forgot your password?",
+    "username": "Username",
+    "usernameRequired": "Please input your username!",
+    "password": "Password",
+    "passwordRequired": "Please input your password!",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordRequired": "Please confirm your password!",
+    "confirmPasswordMissmatch": "The two passwords that you entered do not match!",
+    "signup": "Sign up",
+    "login": "Login"
+  }
+}
