@@ -14,7 +14,6 @@ i18n
 		fallbackLng: 'en',
 		debug: true,
 		whitelist: languages,
-
 		interpolation: {
 			escapeValue: false,
 		},

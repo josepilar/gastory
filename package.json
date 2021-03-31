@@ -11,7 +11,7 @@
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
-    "antd": "^4.8.2",
+    "antd": "^4.15.0",
     "axios": "^0.19.2",
     "babel-plugin-import": "^1.13.1",
     "blueimp-md5": "^2.18.0",

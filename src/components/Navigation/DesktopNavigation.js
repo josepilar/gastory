@@ -3,12 +3,11 @@ import { css } from 'emotion';
 import { Layout, Menu } from 'antd';
 import { Link } from "react-router-dom";
 import {useTranslation} from 'react-i18next';
+import { hideOnMobile } from '../../constants';
 
 const DesktopNavigation = ({ auth, cars, setSelectedCar, selectedCar }) => {
   const { t } = useTranslation();
-  return auth?.isLoggedIn ? <Layout.Sider className={css`@media only screen and (max-width: 991px) {
-    display: none;
-  }`} breakpoint="lg" collapsedWidth="0" width={300}>
+  return auth?.isLoggedIn ? <Layout.Sider className={css(hideOnMobile)} breakpoint="lg" collapsedWidth="0" width={300}>
     <Menu mode='inline' className='Side' defaultOpenKeys={['cars', 'home']} selectedKeys={[selectedCar]}>
       <Menu.SubMenu title={t('home.nav.home.title')} key="home">
         <Menu.Item><Link to="/cars">{t('home.nav.home.profile')}</Link></Menu.Item>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import md5 from 'blueimp-md5';
 import { css } from 'emotion';
 import { Layout, Button, Row, Col, Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
 import './App.css';
@@ -10,9 +10,11 @@ import './App.css';
 import Routes from './components/Routes';
 import DesktopNavigation from './components/Navigation/DesktopNavigation';
 import MobileNavigation from './components/Navigation/MobileNavigation';
+import NewTripDrawer from './components/Trips/newTripDrawer';
 
 import { setAuthToken, getCars } from './services/gastory.service';
 import { getUserInformation, deleteUserInformation } from './helpers/identity_helper';
+import { hideOnMobile } from './constants';
 
 import AuthContext from './contexts/AuthContext';
 
@@ -21,6 +23,7 @@ function App() {
   const [auth, setAuth] = useState();
   const [cars, setCars] = useState();
   const [initialized, setInitialized] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [selectedCar, setSelectedCar] = useState('');
   const { t } = useTranslation();
   useEffect(() => {
@@ -53,12 +56,13 @@ function App() {
           <Row>
             <Col xs={20}>
               <Avatar src={auth?.user?.profilePicture || (auth?.user?.email && `https://www.gravatar.com/avatar/${md5(auth?.user?.email.trim().toLowerCase())}`)} icon={<UserOutlined />} />
-              <span style={{ marginLeft: 16, verticalAlign: 'middle' }}>
+              <span style={{ margin: 16, verticalAlign: 'middle' }}>
                 {auth?.isLoggedIn ? `${t('home.header.welcome')} ${auth?.user?.displayName}` : t('home.header.login')}
               </span>
+              {auth?.isLoggedIn && <Button type="link" icon={<LogoutOutlined />} onClick={logout}>{t('home.header.logout')}</Button>}
             </Col >
-            <Col xs={4} className={css`text-align: right;`}>
-              {auth?.isLoggedIn && <Button onClick={logout}>{t('home.header.logout')}</Button>}
+            <Col xs={4} className={css`text-align: right;`} className={css(hideOnMobile)}>
+              {auth?.isLoggedIn && <Button type="primary" shape="round" icon={<PlusCircleOutlined />} onClick={() => setVisible(true)}>{t('home.header.addFuelUp')}</Button>}
             </Col>
           </Row >
         </Layout.Header >
@@ -74,6 +78,11 @@ function App() {
         </Layout>
         <MobileNavigation cars={cars} setSelectedCar={setSelectedCar} auth={auth} />
       </Layout >
+      <NewTripDrawer 
+        title="Add new trip"
+        visible={visible}
+        onClose={() => setVisible(false)}
+        bodyStyle={{ paddingBottom: 80 }}/>
     </AuthContext.Provider >
   );
 }

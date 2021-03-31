@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
+import { hideOnDesktop } from '../../constants';
+
 export const Wrapper = styled.div`
-  @media only screen and (min-width: 992px) {
-    display: none;
-  }
+  ${hideOnDesktop}
   box-shadow: 0px 7px 22px 3px rgba(0,0,0,0.75);
   display: flex;
   justify-content: space-around;

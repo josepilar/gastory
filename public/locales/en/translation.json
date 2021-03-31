@@ -7,7 +7,8 @@
     "header": {
       "welcome": "Welcome",
       "logout": "Logout",
-      "login": "Please login to start" 
+      "login": "Please login to start",
+      "addFuelUp": "Add new fuel up" 
     },
     "nav" : {
       "home" : {

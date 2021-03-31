@@ -5,7 +5,10 @@ import { getAverage } from '../../helpers/home.helper';
 import { CarOutlined, DashboardOutlined, ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
+import NewTripDrawer from '../Trips/newTripDrawer';
+
 import { getTrips } from '../../services/gastory.service';
+import { hideOnDesktop } from '../../constants';
 
 const loadingStyles = {
     display: 'flex',
@@ -31,6 +34,7 @@ width: 100%;
 const Home = ({ cars, carSelected }) => {
     const [selectedCar, setSelectedCar] = useState(carSelected);
     const [carsWithTrips, setCarsWithTrips] = useState();
+    const [visible, setVisible] = useState(false);
     const [tripsLoading, setTripsLoading] = useState(false);
     const { t } = useTranslation();
     
@@ -180,16 +184,19 @@ const Home = ({ cars, carSelected }) => {
                     </Card>
                 </Col>
             </Row>
-            <Button className={css`
-                @media only screen and (min-width: 992px) {
-                    display: none;
-                }
+            <Button onClick={() => setVisible(true)} className={css`
+                ${hideOnDesktop}
                 position: fixed;
                 bottom: calc(8% + 25px);
                 right: 25px;
                 height: 3.6em;
                 width: 3.6em;
             `} type="primary" shape="circle" icon={<PlusOutlined />} />
+            <NewTripDrawer 
+                title="Add new trip"
+                visible={visible}
+                onClose={() => setVisible(false)}
+                bodyStyle={{ paddingBottom: 80 }}/>
         </div>
     );
 };
